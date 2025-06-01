@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Institute Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f7fc;
+      color: #333;
+    }
+
+    .navbar {
+      background-color: #2c3e50;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .logo img {
+      height: 60px;
+      width: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .welcome-message {
+      color: white;
+      font-size: 1.5rem;
+      margin-left: 20px;
+      flex: 1;
+    }
+
+    .navbar ul {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      justify-content: flex-end;
+    }
+
+    .navbar a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.2rem;
+      transition: color 0.3s ease;
+    }
+
+    .navbar a:hover {
+      color: #e74c3c;
+    }
+
+    .main-content {
+      margin: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      font-size: 2rem;
+      margin-bottom: 30px;
+    }
+
+    .overview {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      color: #2c3e50;
+      margin-bottom: 15px;
+      width: 100%;
+    }
+
+    .overview-cards {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background-color: #ecf0f1;
+      padding: 20px;
+      width: 30%;
+      min-width: 200px;
+      text-align: center;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card h2 {
+      font-size: 1.5rem;
+      color: #34495e;
+    }
+
+    .card p {
+      font-size: 1.2rem;
+      color: #16a085;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      font-size: 1.1rem;
+    }
+
+    th {
+      background-color: #2c3e50;
+      color: #fff;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    button {
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .active {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .welcome-message {
+        margin: 10px 0;
+      }
+
+      .navbar ul {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+      }
+
+      .overview-cards {
+        flex-direction: column;
+      }
+
+      .card {
+        width: 100%;
+      }
+    }
+
+    .register-container {
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .register-container input, .register-container select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .thankyou-message {
+      text-align: center;
+      padding: 50px;
+      font-size: 1.5rem;
+      color: #2c3e50;
+    }
+
+    #enrollMessage {
+      text-align: center;
+      font-size: 1.2rem;
+      color: green;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">
+      <img src="logo.png" alt="Institute Logo">
+    </div>
+    <div class="welcome-message">Welcome to the Visionary Technology Dashboard</div>
+    <ul>
+      <li><a href="javascript:void(0)" onclick="showSection('dashboard')">Dashboard</a></li>
+      <li><a href="javascript:void(0)" onclick="showSection('courses')">Courses</a></li>
+      <li><a href="javascript:void(0)" onclick="showSection('timetable')">Timetable</a></li>
+      <li><a href="javascript:void(0)" onclick="showSection('register')">Register</a></li>
+      <li><a href="javascript:void(0)" onclick="logout()">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="main-content">
+    <!-- Dashboard -->
+    <div id="dashboard" class="section active">
+      <section class="overview">
+        <div class="section-title">Overview</div>
+        <div class="overview-cards">
+          <div class="card"><h2>Students</h2><p>200+</p></div>
+          <div class="card"><h2>Courses</h2><p>10+</p></div>
+          <div class="card"><h2>Teachers</h2><p>15+</p></div>
+        </div>
+      </section>
+      <section class="student-list">
+        <div class="section-title">Student List</div>
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Email</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>John Doe</td><td>johndoe@gmail.com</td><td><button>View</button></td></tr>
+            <tr><td>Jane Smith</td><td>janesmith@gmail.com</td><td><button>View</button></td></tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- Courses -->
+    <div id="courses" class="section">
+      <h1>Course List</h1>
+      <div id="enrollMessage"></div>
+      <table>
+        <thead>
+          <tr><th>Course Name</th><th>Description</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Web Development</td>
+            <td>Learn HTML, CSS, JS</td>
+            <td><button onclick="enroll('Web Development')">Enroll</button></td>
+          </tr>
+          <tr>
+            <td>Data Structures</td>
+            <td>Master algorithms</td>
+            <td><button onclick="enroll('Data Structures')">Enroll</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Timetable -->
+    <div id="timetable" class="section">
+      <h1>Timetable</h1>
+      <table>
+        <thead>
+          <tr><th>Day</th><th>Time</th><th>Subject</th><th>Teacher</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Monday</td><td>9-11 AM</td><td>Web Development</td><td>Mr. John</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Register -->
+    <div id="register" class="section">
+      <h1 style="text-align:center;">Student Registration</h1>
+      <div class="register-container">
+        <form onsubmit="return registerUser()">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" required>
+
+          <label for="email">Email</label>
+          <input type="email" id="email" required>
+
+          <label for="password">Password</label>
+          <input type="password" id="password" required minlength="6">
+
+          <label for="course">Select Course</label>
+          <select id="course" required>
+            <option value="">-- Choose Course --</option>
+            <option value="Web Development">Web Development</option>
+            <option value="Machine Learning">Machine Learning</option>
+            <option value="DBMS">DBMS</option>
+          </select>
+
+          <button type="submit">Register</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Thank You Page -->
+    <div id="thankyou" class="section">
+      <div class="thankyou-message">
+        <h1>Thank You for Your Support!</h1>
+        <p>We appreciate your time and interest in our institute.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showSection(section) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(section).classList.add('active');
+    }
+
+    function logout() {
+      if (confirm("Are you sure you want to logout?")) {
+        showSection('thankyou');
+      }
+    }
+
+    function registerUser() {
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const course = document.getElementById('course').value;
+
+      if (!name || !email || !course) {
+        alert("Please fill all fields.");
+        return false;
+      }
+
+      alert(`Thanks for registering, ${name}! You have enrolled in the ${course} course.`);
+      showSection('dashboard');
+      return false;
+    }
+
+    function enroll(courseName) {
+      const messageDiv = document.getElementById('enrollMessage');
+      messageDiv.textContent = `You have successfully enrolled in the ${courseName} course!`;
+      showSection('courses');
+    }
+
+    window.onload = function () {
+      console.log("Welcome to the Institute Dashboard!");
+      alert("Welcome to the Institute Dashboard!");
+    };
+  </script>
+</body>
+</html>

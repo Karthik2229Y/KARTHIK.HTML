@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Institute Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     * {
       margin: 0;
@@ -15,6 +16,12 @@
       font-family: Arial, sans-serif;
       background-color: #f4f7fc;
       color: #333;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+      background-color: #1e1e2f;
+      color: #f1f1f1;
     }
 
     .navbar {
@@ -24,6 +31,10 @@
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
+    }
+
+    .dark-mode .navbar {
+      background-color: #121212;
     }
 
     .logo img {
@@ -99,6 +110,11 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
+    .dark-mode .card {
+      background-color: #2a2a3d;
+      color: #fff;
+    }
+
     .card h2 {
       font-size: 1.5rem;
       color: #34495e;
@@ -131,6 +147,14 @@
       background-color: #f2f2f2;
     }
 
+    .dark-mode th {
+      background-color: #333;
+    }
+
+    .dark-mode tr:nth-child(even) {
+      background-color: #444;
+    }
+
     button {
       background-color: #3498db;
       color: #fff;
@@ -146,10 +170,15 @@
     }
 
     .section {
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
       display: none;
     }
 
-    .active {
+    .section.active {
+      opacity: 1;
+      pointer-events: auto;
       display: block;
     }
 
@@ -157,10 +186,6 @@
       .navbar {
         flex-direction: column;
         align-items: flex-start;
-      }
-
-      .welcome-message {
-        margin: 10px 0;
       }
 
       .navbar ul {
@@ -209,6 +234,13 @@
       color: green;
       margin-bottom: 20px;
     }
+
+    #searchInput {
+      padding: 10px;
+      width: 100%;
+      margin: 15px 0;
+      font-size: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -222,6 +254,7 @@
       <li><a href="javascript:void(0)" onclick="showSection('courses')">Courses</a></li>
       <li><a href="javascript:void(0)" onclick="showSection('timetable')">Timetable</a></li>
       <li><a href="javascript:void(0)" onclick="showSection('register')">Register</a></li>
+      <li><a href="javascript:void(0)" onclick="toggleDarkMode()">🌓 Theme</a></li>
       <li><a href="javascript:void(0)" onclick="logout()">Logout</a></li>
     </ul>
   </nav>
@@ -236,17 +269,16 @@
           <div class="card"><h2>Courses</h2><p>10+</p></div>
           <div class="card"><h2>Teachers</h2><p>15+</p></div>
         </div>
+        <canvas id="courseChart" width="400" height="200"></canvas>
       </section>
       <section class="student-list">
         <div class="section-title">Student List</div>
+        <input type="text" id="searchInput" placeholder="Search students..." onkeyup="filterStudents()">
         <table>
           <thead>
             <tr><th>Name</th><th>Email</th><th>Actions</th></tr>
           </thead>
-          <tbody>
-            <tr><td>John Doe</td><td>johndoe@gmail.com</td><td><button>View</button></td></tr>
-            <tr><td>Jane Smith</td><td>janesmith@gmail.com</td><td><button>View</button></td></tr>
-          </tbody>
+          <tbody></tbody>
         </table>
       </section>
     </div>
@@ -335,19 +367,60 @@
       }
     }
 
-    function registerUser() {
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const course = document.getElementById('course').value;
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+    }
 
-      if (!name || !email || !course) {
-        alert("Please fill all fields.");
+    function registerUser() {
+      const nameEl = document.getElementById('name');
+      const emailEl = document.getElementById('email');
+      const courseEl = document.getElementById('course');
+
+      [nameEl, emailEl, courseEl].forEach(el => el.style.borderColor = "#ccc");
+
+      if (!nameEl.value.trim() || !emailEl.value.trim() || !courseEl.value) {
+        [nameEl, emailEl, courseEl].forEach(el => {
+          if (!el.value.trim()) el.style.borderColor = "red";
+        });
         return false;
       }
 
-      alert(`Thanks for registering, ${name}! You have enrolled in the ${course} course.`);
+      const student = {
+        name: nameEl.value.trim(),
+        email: emailEl.value.trim(),
+        course: courseEl.value
+      };
+
+      const students = JSON.parse(localStorage.getItem("students")) || [];
+      students.push(student);
+      localStorage.setItem("students", JSON.stringify(students));
+
+      alert(`Thanks for registering, ${student.name}! You have enrolled in the ${student.course} course.`);
+      updateStudentList();
+      drawChart();
       showSection('dashboard');
       return false;
+    }
+
+    function updateStudentList() {
+      const students = JSON.parse(localStorage.getItem("students")) || [];
+      const tbody = document.querySelector("#dashboard .student-list tbody");
+      tbody.innerHTML = "";
+      students.forEach(s => {
+        const row = `<tr><td>${s.name}</td><td>${s.email}</td><td><button>View</button></td></tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    function filterStudents() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      const rows = document.querySelectorAll("#dashboard .student-list tbody tr");
+
+      rows.forEach(row => {
+        const name = row.children[0].textContent.toLowerCase();
+        const email = row.children[1].textContent.toLowerCase();
+        row.style.display = (name.includes(input) || email.includes(input)) ? "" : "none";
+      });
     }
 
     function enroll(courseName) {
@@ -356,8 +429,31 @@
       showSection('courses');
     }
 
+    function drawChart() {
+      const ctx = document.getElementById('courseChart').getContext('2d');
+      const students = JSON.parse(localStorage.getItem("students")) || [];
+      const courseCount = {};
+
+      students.forEach(s => {
+        courseCount[s.course] = (courseCount[s.course] || 0) + 1;
+      });
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(courseCount),
+          datasets: [{
+            label: '# of Enrollments',
+            data: Object.values(courseCount),
+            backgroundColor: 'rgba(52, 152, 219, 0.6)'
+          }]
+        }
+      });
+    }
+
     window.onload = function () {
-      console.log("Welcome to the Institute Dashboard!");
+      updateStudentList();
+      drawChart();
       alert("Welcome to the Institute Dashboard!");
     };
   </script>
